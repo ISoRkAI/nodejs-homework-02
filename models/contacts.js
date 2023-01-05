@@ -1,6 +1,5 @@
 const path = require('path');
 const fs = require('fs').promises;
-const { schema } = require('../validation');
 const { randomBytes } = require('node:crypto');
 const contactsPath = path.join(__dirname, '/contacts.json');
 
@@ -30,7 +29,6 @@ const removeContact = async contactId => {
       return id === contactId.toString();
     });
     if (index === -1) {
-      console.log(index);
       return null;
     }
     const [removedContacts] = contacts.splice(index, 1);
@@ -43,10 +41,6 @@ const addContact = async body => {
   try {
     const { name, email, phone } = body;
 
-    const validationResult = schema.validate(body);
-    if (validationResult.error) {
-      return 'error';
-    }
     const contacts = await listContacts();
     contacts.push({ id: randomBytes(10).toString('hex'), name: name, email: email, phone: phone });
     await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
@@ -59,10 +53,7 @@ const addContact = async body => {
 const updateContact = async (contactId, body) => {
   try {
     const { name, email, phone } = body;
-    const validationResult = schema.validate(body);
-    if (validationResult.error) {
-      return 'error';
-    }
+
     const contacts = await listContacts();
 
     contacts.forEach(contact => {
