@@ -1,7 +1,6 @@
 const path = require('path');
 const fs = require('fs').promises;
-const Joi = require('joi');
-
+const { schema } = require('../validation');
 const { randomBytes } = require('node:crypto');
 const contactsPath = path.join(__dirname, '/contacts.json');
 
@@ -17,7 +16,6 @@ const listContacts = async () => {
 const getContactById = async contactId => {
   try {
     const contacts = await listContacts();
-
     const getContact = contacts.find(contacts => Number(contacts.id) === Number(contactId));
     return getContact;
   } catch (error) {
@@ -44,13 +42,7 @@ const removeContact = async contactId => {
 const addContact = async body => {
   try {
     const { name, email, phone } = body;
-    const schema = Joi.object({
-      name: Joi.string().alphanum().min(3).max(30).required(),
-      email: Joi.string()
-        .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
-        .required(),
-      phone: Joi.string().min(1).max(30).required(),
-    });
+
     const validationResult = schema.validate(body);
     if (validationResult.error) {
       return 'error';
@@ -65,29 +57,26 @@ const addContact = async body => {
 };
 
 const updateContact = async (contactId, body) => {
-  const { name, email, phone } = body;
-  const schema = Joi.object({
-    name: Joi.string().alphanum().min(3).max(30).required(),
-    email: Joi.string()
-      .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
-      .required(),
-    phone: Joi.string().min(1).max(30).required(),
-  });
-  const validationResult = schema.validate(body);
-  if (validationResult.error) {
-    return 'error';
-  }
-  const contacts = await listContacts();
-
-  contacts.forEach(contact => {
-    if (contact.id === contactId) {
-      contact.name = name;
-      contact.email = email;
-      contact.phone = phone;
+  try {
+    const { name, email, phone } = body;
+    const validationResult = schema.validate(body);
+    if (validationResult.error) {
+      return 'error';
     }
-  });
-  await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
-  return contacts;
+    const contacts = await listContacts();
+
+    contacts.forEach(contact => {
+      if (contact.id === contactId) {
+        contact.name = name;
+        contact.email = email;
+        contact.phone = phone;
+      }
+    });
+    await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
+    return contacts;
+  } catch (error) {
+    return error;
+  }
 };
 
 module.exports = {
