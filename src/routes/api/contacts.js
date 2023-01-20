@@ -1,5 +1,5 @@
 const express = require('express');
-const { schema } = require('../../validation');
+const { schema } = require('../../middlewares/validation');
 const contacts = require('../../models/contacts');
 const router = express.Router();
 
@@ -59,6 +59,19 @@ router.put('/:contactId', async (req, res, next) => {
     const contactId = req.params.contactId;
     const changes = await contacts.updateContact(contactId, req.body);
     res.status(200).json({ changes, message: 'template message put' });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.patch('/:contactId/favorite', async (req, res, next) => {
+  try {
+    const contactId = req.params.contactId;
+    const patchContact = await contacts.updateStatusContact(contactId, req.body);
+    if (!patchContact) {
+      return res.status(404).json({ message: 'missing field favorite' });
+    }
+    res.status(200).json({ patchContact });
   } catch (error) {
     next(error);
   }
