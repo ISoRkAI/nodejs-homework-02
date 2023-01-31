@@ -1,10 +1,11 @@
 const express = require('express');
 
 const { authMiddleware } = require('../middlewares/authMiddleware');
+const { userValidation } = require('../middlewares/validation');
 const authUser = require('./api/authUser');
 const router = express.Router();
 
-router.post('/signup', async (req, res, next) => {
+router.post('/signup', userValidation, async (req, res, next) => {
   try {
     const signupUser = await authUser.signup(req.body);
     const { email, subscription } = signupUser;
@@ -16,7 +17,7 @@ router.post('/signup', async (req, res, next) => {
   }
 });
 
-router.post('/login', async (req, res, next) => {
+router.post('/login', userValidation, async (req, res, next) => {
   try {
     const { token, user } = await authUser.login(req.body);
     const { email, subscription } = user;

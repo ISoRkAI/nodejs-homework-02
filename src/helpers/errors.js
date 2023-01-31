@@ -1,10 +1,4 @@
-class RegistrationValidationError extends Error {
-  constructor(message) {
-    super(message);
-    this.status = 400;
-  }
-}
-class LoginValidationError extends Error {
+class AuthorizationError extends Error {
   constructor(message) {
     super(message);
     this.status = 400;
@@ -16,25 +10,7 @@ class RegistrationConflictError extends Error {
     this.status = 409;
   }
 }
-class LoginAuthError extends Error {
-  constructor(message) {
-    super(message);
-    this.status = 401;
-  }
-}
-class MiddlewareUnauthorizedError extends Error {
-  constructor(message) {
-    super(message);
-    this.status = 400;
-  }
-}
-class LogoutUnauthorizedError extends Error {
-  constructor(message) {
-    super(message);
-    this.status = 401;
-  }
-}
-class CurrentUserUnauthorizedError extends Error {
+class UnauthorizedError extends Error {
   constructor(message) {
     super(message);
     this.status = 401;
@@ -42,11 +18,7 @@ class CurrentUserUnauthorizedError extends Error {
 }
 
 module.exports = {
-  RegistrationValidationError, // ✅
-  RegistrationConflictError, // ✅
-  LoginAuthError, // ✅
-  MiddlewareUnauthorizedError,
-  LogoutUnauthorizedError,
-  CurrentUserUnauthorizedError,
-  LoginValidationError, // ✅
+  AuthorizationError,
+  RegistrationConflictError,
+  UnauthorizedError,
 };

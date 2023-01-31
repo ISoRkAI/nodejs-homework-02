@@ -1,6 +1,6 @@
 const express = require('express');
 
-const { schema } = require('../middlewares/validation');
+const { contactValidation } = require('../middlewares/validation');
 const contacts = require('./api/contacts');
 const { authMiddleware } = require('../middlewares/authMiddleware');
 
@@ -35,16 +35,10 @@ router.get('/:contactId', async (req, res, next) => {
   }
 });
 
-router.post('/', async (req, res, next) => {
+router.post('/', contactValidation, async (req, res, next) => {
   try {
     const post = req.body;
-    const validationResult = schema.validate(post);
     const { _id: owner } = req.user;
-
-    if (validationResult.error) {
-      return res.status(400).json({ message: 'missing required name field' });
-    }
-
     const postContac = await contacts.addContact(post, owner);
     res.status(201).json({ postContac });
   } catch (error) {
@@ -67,13 +61,8 @@ router.delete('/:contactId', async (req, res, next) => {
   }
 });
 
-router.put('/:contactId', async (req, res, next) => {
+router.put('/:contactId', contactValidation, async (req, res, next) => {
   try {
-    const validationResult = schema.validate(req.body);
-
-    if (validationResult.error) {
-      return res.status(400).json({ message: 'missing fields' });
-    }
     const post = req.body;
     const postId = req.params.contactId;
     const { _id: owner } = req.user;
