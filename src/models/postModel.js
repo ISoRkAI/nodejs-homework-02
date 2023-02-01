@@ -7,13 +7,19 @@ const contactShema = new mongoose.Schema({
   },
   email: {
     type: String,
+    unique: true,
   },
   phone: {
     type: String,
+    unique: true,
   },
   favorite: {
     type: Boolean,
     default: false,
+  },
+  owner: {
+    type: mongoose.Types.ObjectId,
+    ref: 'user',
   },
 });
 
