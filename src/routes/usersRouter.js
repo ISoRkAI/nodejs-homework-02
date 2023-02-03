@@ -1,9 +1,10 @@
 const express = require('express');
+const router = express.Router();
 
 const { authMiddleware } = require('../middlewares/authMiddleware');
+const { upload } = require('../middlewares/avatarMiddleware');
 const { userValidation } = require('../middlewares/validation');
 const authUser = require('./api/authUser');
-const router = express.Router();
 
 router.post('/signup', userValidation, async (req, res, next) => {
   try {
@@ -27,9 +28,7 @@ router.post('/login', userValidation, async (req, res, next) => {
   }
 });
 
-router.use(authMiddleware);
-
-router.get('/current', async (req, res, next) => {
+router.get('/current', authMiddleware, async (req, res, next) => {
   try {
     const { email, subscription } = await authUser.current(req.user);
     res.status(200).json({ email, subscription });
@@ -38,7 +37,7 @@ router.get('/current', async (req, res, next) => {
   }
 });
 
-router.get('/logout', async (req, res, next) => {
+router.get('/logout', authMiddleware, async (req, res, next) => {
   try {
     const { _id } = req.user;
     const { email, subscription } = await authUser.logout(_id);
@@ -47,4 +46,15 @@ router.get('/logout', async (req, res, next) => {
     next(error);
   }
 });
+
+router.patch('/avatars', authMiddleware, upload.single('avatar'), async (req, res, next) => {
+  try {
+    const { _id } = req.user;
+    const avatarAddress = await authUser.updateAvatar(req.file, _id);
+    res.status(200).json({ avatarURL: avatarAddress });
+  } catch (error) {
+    next(error);
+  }
+});
+
 module.exports = router;

@@ -3,12 +3,12 @@ const logger = require('morgan');
 const cors = require('cors');
 
 const { errorHandler } = require('./src/helpers/apiHelpers');
-const contactsRouter = require('./src/routes/contacts');
-const usersRouter = require('./src/routes/users');
+const contactsRouter = require('./src/routes/contactsRoute');
+const usersRouter = require('./src/routes/usersRouter');
 const app = express();
 
 const formatsLogger = app.get('env') === 'development' ? 'dev' : 'short';
-
+app.use('/avatars', express.static('./src/public/avatars'));
 app.use(logger(formatsLogger));
 app.use(cors());
 app.use(express.json());
