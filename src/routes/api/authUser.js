@@ -59,7 +59,7 @@ const updateAvatar = async (file, userId) => {
   image.write(path.resolve(__dirname, '../../tmp', filename));
 
   await fs.rename(tmpPath, publicPath);
-
+  //
   await User.findByIdAndUpdate(userId, { avatarURL: publicPath });
   return publicPath;
 };
