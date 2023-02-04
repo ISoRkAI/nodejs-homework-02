@@ -52,14 +52,13 @@ const updateAvatar = async (file, userId) => {
   const { filename } = file;
 
   const tmpPath = path.resolve(__dirname, '../../tmp', filename);
-  const publicPath = path.resolve(__dirname, '../../public/avatars', filename);
+  const publicPath = path.resolve(__dirname, '../../../public/avatars', filename);
 
   const image = await Jimp.read(tmpPath);
   image.resize(250, 250);
   image.write(path.resolve(__dirname, '../../tmp', filename));
 
   await fs.rename(tmpPath, publicPath);
-  //
   await User.findByIdAndUpdate(userId, { avatarURL: publicPath });
   return publicPath;
 };
