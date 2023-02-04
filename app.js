@@ -3,8 +3,8 @@ const logger = require('morgan');
 const cors = require('cors');
 
 const { errorHandler } = require('./src/helpers/apiHelpers');
-const contactsRouter = require('./src/routes/contacts');
-const usersRouter = require('./src/routes/users');
+const contactsRouter = require('./src/routes/contactsRoute');
+const usersRouter = require('./src/routes/usersRouter');
 const app = express();
 
 const formatsLogger = app.get('env') === 'development' ? 'dev' : 'short';
@@ -16,7 +16,7 @@ app.use(express.json());
 app.use('/api/users', usersRouter);
 
 app.use('/api/contacts', contactsRouter);
-
+app.use('/avatars', express.static('public'));
 app.use(errorHandler);
 app.use((req, res) => {
   res.status(404).json({ message: 'Not found' });
