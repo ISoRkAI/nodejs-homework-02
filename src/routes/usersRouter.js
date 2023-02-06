@@ -57,4 +57,32 @@ router.patch('/avatars', authMiddleware, upload.single('avatar'), async (req, re
   }
 });
 
+router.post('/verify/:verificationToken', async (req, res, next) => {
+  try {
+    const { verificationToken } = req.params;
+    await authUser.verificationUser(verificationToken);
+    res.status(200).json({
+      ResponseBody: {
+        message: `Verification successful`,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post('/verify', async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    await authUser.reVerification(email);
+    res.status(200).json({
+      ResponseBody: {
+        message: `Verification email sent`,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
 module.exports = router;
