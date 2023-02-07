@@ -53,7 +53,7 @@ const verificationUser = async verificationToken => {
   const msg = {
     to: user.email,
     from: 'dimasoroka17@gmail.com',
-    subject: 'Thank you for registration!',
+    subject: 'Thank you, for registration!',
     text: `Verification successful `,
     html: `Verification successful `,
   };
