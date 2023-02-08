@@ -23,6 +23,14 @@ const userShema = new mongoose.Schema({
   avatarURL: {
     type: String,
   },
+  verify: {
+    type: Boolean,
+    default: false,
+  },
+  verificationToken: {
+    type: String,
+    required: [true, 'Verify token is required'],
+  },
 });
 
 userShema.pre('save', async function () {
